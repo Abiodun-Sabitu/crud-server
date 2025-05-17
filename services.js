@@ -9,7 +9,7 @@ function logFilePath() {
 
 function getAllBooks() {
  try {
-   const getContents = fs.readFileSync(allBooksPatth, "utf8");
+   const getContents = fs.readFileSync(allBooksPath, "utf8");
   //console.log(JSON.parse(getContents)) 
   return JSON.parse(getContents);
  } catch (error) {
@@ -31,13 +31,16 @@ function assignBookId(books) {
 }
 
 function updateCatalogue(data) {
-  fs.writeFile(allBooksPath, data, (err) => {
-    err
-      ? console.log(`operation not successful: catalogue wasn't updated `)
-      : console.log(`operation successful: catalogue has been refreshed! `);
+  return new Promise((resolve, reject) => {
+    fs.writeFile(allBooksPath, data, (err) => {
+      if (err) {
+        console.log(`operation not successful: catalogue wasn't updated`);
+        return reject(err);
+      }
+      console.log(`operation successful: catalogue has been refreshed!`);
+      resolve(getAllBooks());
+    });
   });
-  // fs.writeFileSync(allBooksPath, data);
-  // console.log(`operation successful: catalogue has been refreshed! `);
 }
 
 function addBook(bookToAdd) {
@@ -45,8 +48,8 @@ function addBook(bookToAdd) {
   id = assignBookId(books);
   const newBook = { ...bookToAdd, id };
   books.push(newBook);
-  console.log(books);
-  updateCatalogue(JSON.stringify(books));
+  //console.log(books);
+ return updateCatalogue(JSON.stringify(books));
 }
 
 function editBook(bookToEdit) {
