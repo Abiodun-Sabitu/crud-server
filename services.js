@@ -9,12 +9,12 @@ function logFilePath() {
 
 function getAllBooks() {
  try {
-   const getContents = fs.readFileSync(allBooksPath, "utf8");
-  console.log(JSON.parse(getContents)) 
+   const getContents = fs.readFileSync(allBooksPatth, "utf8");
+  //console.log(JSON.parse(getContents)) 
   return JSON.parse(getContents);
  } catch (error) {
-  console.log(error)
-  return error
+  //console.log('ff',error)
+  throw error; 
  }
   //  console.log(getContents)
 }
