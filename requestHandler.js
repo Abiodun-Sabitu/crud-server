@@ -51,6 +51,34 @@ function requestHandler(req, res) {
       }
     });
   }
+
+  //Edit Book
+
+  if (req.url === "/books" && req.method === "PUT") {
+    let receivedData = "";
+    req.on("data", (chunk) => {
+      //console.log('chunk', chunk)
+      receivedData += chunk.toString();
+      //console.log(JSON.parse(receivedData))
+    });
+    req.on("end", async () => {
+      try {
+        const data = JSON.parse(receivedData);
+        if (!data || Object.keys(data).length === 0) {
+          return sendJsonResponse(res, 400, {
+            error: "Bad request:modified book id and details must be provided"
+          });
+        }
+        const updatedCatalogue = await run.editBook(data);
+        return sendJsonResponse(res, 201, {
+          message: "Book edited successfully",
+          books: updatedCatalogue,
+        });
+      } catch (error) {
+        return sendJsonResponse(res, 500, { error: error.message });
+      }
+    });
+  }
 }
 
 module.exports = requestHandler;

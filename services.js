@@ -59,12 +59,13 @@ function editBook(bookToEdit) {
   );
   if (indexOfBookToEdit === -1) {
     console.log(`cannot find the book you want to edit`);
-    return;
+    throw new Error(`cannot find the book you want to edit`)
+    
   }
   //console.log(books[indexOfBookToEdit])
   books[indexOfBookToEdit] = { ...books[indexOfBookToEdit], ...bookToEdit };
   //console.log(books)
-  updateCatalogue(JSON.stringify(books));
+ return updateCatalogue(JSON.stringify(books));
 }
 
 
