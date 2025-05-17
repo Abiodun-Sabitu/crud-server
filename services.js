@@ -71,18 +71,18 @@ function editBook(bookToEdit) {
 
 function deleteBook(bookToBeDeleted) {
   const idOfBookToBeDeleted = bookToBeDeleted.id
-  console.log(idOfBookToBeDeleted)
+ // console.log(idOfBookToBeDeleted)
   const books = getAllBooks();
   const indexOfBookToRemove = books.findIndex(
     (book) => book.id === idOfBookToBeDeleted
   );
-  console.log(indexOfBookToRemove)
+  //console.log(indexOfBookToRemove)
   if (indexOfBookToRemove === -1) {
     console.log(`cannot find the book you want to delete`);
-    return;
+    throw new Error(`cannot find the book you want to delete`)
   }
   books.splice(indexOfBookToRemove, 1);
-  updateCatalogue(JSON.stringify(books));
+  return updateCatalogue(JSON.stringify(books));
 }
 
 
