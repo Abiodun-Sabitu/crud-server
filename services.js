@@ -7,14 +7,15 @@ function logFilePath() {
   console.log(allBooksPath);
 }
 
-// function convertToReadable(data) {
-//   const convertedData = Buffer.from(data).toString("utf-8");
-//   return convertedData;
-// }
-
 function getAllBooks() {
-  const getContents = fs.readFileSync(allBooksPath, "utf8");
+ try {
+   const getContents = fs.readFileSync(allBooksPath, "utf8");
+  console.log(JSON.parse(getContents)) 
   return JSON.parse(getContents);
+ } catch (error) {
+  console.log(error)
+  return error
+ }
   //  console.log(getContents)
 }
 
@@ -30,8 +31,13 @@ function assignBookId(books) {
 }
 
 function updateCatalogue(data) {
-  fs.writeFileSync(allBooksPath, data);
-  console.log(`success`);
+  fs.writeFile(allBooksPath, data, (err) => {
+    err
+      ? console.log(`operation not successful: catalogue wasn't updated `)
+      : console.log(`operation successful: catalogue has been refreshed! `);
+  });
+  // fs.writeFileSync(allBooksPath, data);
+  // console.log(`operation successful: catalogue has been refreshed! `);
 }
 
 function addBook(bookToAdd) {
@@ -43,33 +49,44 @@ function addBook(bookToAdd) {
   updateCatalogue(JSON.stringify(books));
 }
 
-const bookToEdit = {
-  title: "Ougadougou",
-  author: "Brian Christian and Thomas L. Griffiths",
-  year: 2017,
-  id: 3,
-};
-
 function editBook(bookToEdit) {
   const books = getAllBooks();
   const indexOfBookToEdit = books.findIndex(
     (book) => book.id === bookToEdit.id
   );
+  if (indexOfBookToEdit === -1) {
+    console.log(`cannot find the book you want to edit`);
+    return;
+  }
   //console.log(books[indexOfBookToEdit])
   books[indexOfBookToEdit] = { ...books[indexOfBookToEdit], ...bookToEdit };
   //console.log(books)
   updateCatalogue(JSON.stringify(books));
 }
 
-// editBook(bookToEdit)
 
 function deleteBook(bookToBeDeleted) {
+  const idOfBookToBeDeleted = bookToBeDeleted.id
+  console.log(idOfBookToBeDeleted)
   const books = getAllBooks();
   const indexOfBookToRemove = books.findIndex(
-    (book) => book.id === bookToBeDeleted.id
+    (book) => book.id === idOfBookToBeDeleted
   );
+  console.log(indexOfBookToRemove)
+  if (indexOfBookToRemove === -1) {
+    console.log(`cannot find the book you want to delete`);
+    return;
+  }
   books.splice(indexOfBookToRemove, 1);
-  updateCatalogue(JSON.stringify(books))
+  updateCatalogue(JSON.stringify(books));
 }
 
-deleteBook(bookToEdit);
+
+
+module.exports = {
+logFilePath,
+getAllBooks,
+addBook,
+editBook,
+deleteBook
+}
